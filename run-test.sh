@@ -6,7 +6,7 @@
 # This script automatically detects whether the program is a C or C++ program
 # and invokes clang or clang++ respectively.
 
-CFLAGS="-g -O3"
+CFLAGS="-g"
 CXXFLAGS="$CFLAGS -std=c++0x -stdlib=libc++"
 
 cache_source_name() {
@@ -24,7 +24,7 @@ cache_source_name() {
 init_vars() {
   echo "INFO: Initializing vars."
 # Set in order to call `time` and suppress stderr from final runs.
-# TIME_IT=
+TIME_IT=1
 
   SELF_DIR=$(dirname $0)
   PROJECT_ROOT=${PWD}/${SELF_DIR}/..
@@ -199,12 +199,18 @@ do_fullprof() {
 
 do_final_compile() {
   echo "INFO: Compiling transformed program"
+  MEMALLOC_LIB=$MEMALLOC_ROOT/lib
+  LEVELDB_LIB=$LEVELDB_ROOT/lib
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MEMALLOC_LIB:$LEVELDB_LIB
   $COMPILER                                                                    \
     -stdlib=libc++ -lc++abi -lc++                                              \
     -lbz2                                                                      \
     -lsnappy                                                                   \
-    -L$GRAPH_LIB -lcommprofilerrt                                              \
-    $DI_FILE -o $DI_EXE_FILE
+    -L$MEMALLOC_LIB -ljemalloc                                                 \
+    -L$LEVELDB_LIB -lleveldb                                                   \
+    $DI_FILE                                                                   \
+    $GRAPH_LIB/libcommprofilerrt.a                                             \
+    -o $DI_EXE_FILE
   if [ $? -ne 0 ] ; then
     echo "ERROR: Compiling transformed program failed."
     exit $?
@@ -217,7 +223,7 @@ do_profiling_run() {
   if [ -z "$TIME_IT" ] ; then
     COMM_TEST=0 COMM_DEPTH=0 COMM_FAST=1 ./$EXE $ARGS
   else
-    time { COMM_TEST=0 COMM_DEPTH=0 COMM_FAST=1 ./$EXE $ARGS 2>/dev/null ; }
+    time COMM_TEST=0 COMM_DEPTH=0 COMM_FAST=1 ./$EXE $ARGS
   fi
   if [ $? -ne 0 ] ; then
     echo "ERROR: Profiling memory failed."
@@ -231,7 +237,7 @@ do_commutativity_test() {
   if [ -z "$TIME_IT" ] ; then
     COMM_TEST=1 COMM_DEPTH=0 COMM_FAST=1 ./$EXE $ARGS
   else
-    time { COMM_TEST=1 COMM_DEPTH=0 COMM_FAST=1 ./$EXE $ARGS 2>/dev/null ; }
+    time COMM_TEST=1 COMM_DEPTH=0 COMM_FAST=1 ./$EXE $ARGS
   fi
 
   echo "INFO: Done!"
