@@ -7,45 +7,49 @@ void c();
 void f();
 void g();
 void h();
-void z();
 void x();
 
-void z() { c(); }
-
-void f() {
-  c();
-  void (*ptr)() = g;
-  ptr();
+int main() {
+  g();  // Offset 1
+  f();  // Offset 3
+  return 0;
 }
 
-void g() { h(); }
+void f() {
+  c();  // Offset 1
+  c();  // Offset 2
+  c();  // Offset 3
+  c();  // Offset 4
+  c();  // Offset 5
+  c();  // Offset 6
+  void (*ptr)() = g;
+  ptr();  // Offset 7
+}
+
+void g() {
+  h();  // Offset 1
+}
 
 void h() {
-  c();
+  c();  // Offset 1
   void (*ptr)() = a;
-  ptr();
-  c();
+  ptr();  // Offset 2
+  c();  // Offset 3
 }
 
 void a() {
-  b();
-  c();
+  b();  // Offset 1
+  c();  // Offset 6
 }
 
 void b() {
-  x();
-  c();
+  x();  // Offset 1
+  c();  // Offset 4
 }
 
 void x() {
-  c();
-  c();
+  c();  // Offset 1
+  c();  // Offset 1
 }
 
 void c() {}
-
-int main() {
-  z();
-  f();
-  return 0;
-}
