@@ -1,5 +1,5 @@
-// An example designed to explore edge cases of offset assignment for recursion
-// situations.
+// Treat all functions in a recursive SCC as one and assign unique offsets to
+// all calls in the SCC.
 #include <stdio.h>
 
 bool is_even(int x);

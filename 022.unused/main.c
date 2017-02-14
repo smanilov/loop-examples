@@ -1,7 +1,3 @@
-// The simplest of programs that has a substantial loop. Each element of an
-// array is initialized to its index in the array.
-
-
 int main() {
   unsigned x;
 
