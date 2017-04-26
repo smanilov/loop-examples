@@ -22,6 +22,6 @@ int main() {
   int n;
   scanf("%d", &n);
 
-  printf("%d is %s\n", n, is_even(n) ? "odd" : "even");
+  printf("%d is %s\n", n, !is_even(n) ? "odd" : "even");
   return 0;
 }

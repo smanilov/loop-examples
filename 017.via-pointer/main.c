@@ -11,7 +11,7 @@ void foo(int *A, int len) {
   return;
 }
 
-const int N = 1 << 21;
+const int N = 1 << 10;
 int A[N];
 
 int main() {
