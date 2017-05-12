@@ -3,22 +3,22 @@
 
 bool is_odd(unsigned n);
 
-bool is_even(unsigned n) {
-  if (n == 0) return true;
-  else return is_odd(n - 1);
-}
-
-bool is_odd(unsigned n) {
-  if (n == 0) return false;
-  else return is_even(n - 1);
-}
-
 int inc(int n) {
   return n + 1;
 }
 
 int dec(int n) {
   return n - 1;
+}
+
+bool is_even(unsigned n) {
+  if (n == 0) return true;
+  else return is_odd(dec(n));
+}
+
+bool is_odd(unsigned n) {
+  if (n == 0) return false;
+  else return is_even(dec(n));
 }
 
 int main() {
